@@ -1,0 +1,21 @@
+NAME:  Kyle Leong
+EMAIL: redacted@example.com
+ID:    123456789
+
+Makefile
+	This Makefile contains targets to build the program, execute automated
+	smoke tests, remove all generated files, and create the distribution
+	tarball.
+
+README
+	This file contains explanations of all the other files in the
+	distribution tarball, as well as the sources used to create said files.
+
+lab4b.c
+	This source file contains the target executable that will be geanerated
+	by the Makefile. I used the article titled "Beaglebone Tutorial: GPIO,
+	Interrupt, Analog, and PWM" which was linked to in the Project 4A
+	specification as a reference as to how to access the peripherals. I also
+	used the official MRAA documentation as well as the official Grove
+	temperature sensor documentation, both of which are linked in the
+	spec. I also used the manpages for localtime(3) and time(3).

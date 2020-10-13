@@ -1,0 +1,22 @@
+NAME:  Kyle Leong
+EMAIL: redacted@example.com
+ID:    123456789
+
+Makefile
+	This Makefile contains targets to build the program, execute automated
+	smoke tests, remove all generated files, and create the distribution
+	tarball.
+
+README
+	This file contains explanations of all the other files in the
+	distribution tarball, as well as the sources used to create said files.
+
+lab4c_tcp.c
+	This source file contains the target executable that will be generated
+	by the Makefile. As a reference, I used the source code for lab4b.c.
+
+lab4c_tls.c
+	This source file contains the target executable that will be generated
+	by the Makefile. As a reference, I used the source for lab4b.c,
+	lab4c_tls.c, and the OpenSSL example at
+	https://wiki.openssl.org/index.php/Simple_TLS_Server.

@@ -1,0 +1,25 @@
+NAME:  Kyle Leong
+EMAIL: redacted@example.com
+ID:    123456789
+
+lab1a.c
+	As a reference for the combined utilization of the fork(2), exec(3), and
+	wait(2), I used Figure 5.4 in Arpaci textbook. More specifically, it is
+	located on page 8 of Chapter 5. As a reference for pipe(2), I used the
+	example included within the manpage. For all other syscalls, I used the
+	examples and information included within the manpages on lnxsrv09. As a
+	reference for finding out exactly how the exit signal and status are
+	recovered, and the appropriate macro to use, I look at the website:
+	https://kernel.googlesource.com/pub/scm/linux/kernel/git/nico/archive/+/v0.01/include/sys/wait.h
+
+Makefile
+	The makefile correctly determines if the lab1a executable needs to be
+	re-generateg, via the lemtion of lab1a.c in the dependencies for the
+	lab1a target. The 'clean' target will return the directory to an
+	un-tared state, and the 'dist' target will create a tar.gz file with the
+	appropriate student ID, containing all files necessary to re-create the
+	program. I used the lab 0 Makefile as a reference.
+
+README
+	The README file contains explanations of all the files that will be
+	included within the distribution file.

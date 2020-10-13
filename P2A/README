@@ -1,0 +1,204 @@
+NAME:  Kyle Leong
+EMAIL: redacted@example.com
+ID:    123456789
+
+lab2_add.c
+	This source file implements the lab2_add executable that fulfills the
+	requirements of Part 1. As a reference, I used the pthread example in
+	the manpages. I used my CS 35L project as a reference for the pthread
+	library's syntax as well as the POSIX manuals for the appropriate
+	p_thread functions. For the mutex code, I used the pthreads tutorial at
+	https://computing.llnl.gov/tutorials/pthreads/.
+
+lab2_list.c
+	This source file implement the lab2_list executable that fulfills the
+	requirements of Part 2. Many of the references that I used for
+	lab2_add.c are used in this source module as well.
+
+Makefile
+	This contains the build recipes necessary to make all executables, or
+	only certain ones if the builder so desires. It also has functionality
+	to clean the build area (removing all executables and other temporary
+	files not necessary to the re-creation of the executable. It also
+	contains a dist target that can create the submission tarball. It
+	contains the tests that generate the CSV files for use with gnuplot, and
+	another recipe to turn that CSV into a graph with gnuplot. I used the
+	TA's post @449 on Piazza as a clarification as to what tests to run in
+	the Makefile.
+
+README
+	This is the file that conatins explations as to what every file included
+	in the tarball does as well as the works cited for each source module.
+
+lab2_add-1.png
+	This image contains a plot of how many threads and iterations that can
+	run without failure. From the plot, the higher the thread count, and the
+	higher the iterations per thread, the less likely it is for the program
+	to run without failure.
+	
+lab2_add-2.png
+	This image contains a plot of the number of threads with and without
+	yields versus the cost per iteration in nanoseconds. It is clear that,
+	regardless of the threat count, yielding reduces the cost per operation.
+
+lab2_add-3.png
+	This image contains the correlation of operation cost versus number of
+	iterations for a single thread without yields. From the image, it
+	is clear that as the number of iterations increases, the cost per
+	operation in nanoseconds decreases.
+
+lab2_add-4.png
+	This image provides a comparison between unprotected, compare and swap,
+	mutex, and spin locks in correlation with the number of threads that ran
+	without failure. Regardless of the number of threads and iterations, the
+	test runs without failure.
+
+lab2_add-5.png
+	This image contains a non-smoothed plot of the operation cost versus the
+	number of threads. It compares the performance of each locking type as
+	the thread count increases. We can see that the cost per operation is
+	much higher for spin locks, followed by mutex, followed by compare and
+	swap for thread counts greater than 1.
+
+lab2_list-1.png
+	This image contains a non-smoothed plot of the cost per operation in
+	nanoseconds versus the number of iterations, in both the raw and
+	corrected form (where the iteration count is divided by 4). In the
+	corrected line, the cost per operation approaches a near constant
+	amount.
+	
+lab2_list-2.png
+	This image contains the listings of threads and the type of yield (if
+	any) that yielded a successful iteration. We can see that most
+	successful runs for thread counts higher than 1 are ones that contain
+	under 100 iterations.
+	
+lab2_list-3.png
+	This image shows that the types of protected iterations that run without
+	failure. We see that regardless of yield type and number of iterations,
+	runs that are protected with a mutex or spin lock always are successful,
+	but the unprotected ones vary.
+
+lab2_list-4.png
+	This image shows the scalability of the synchronization mechanisms. It
+	is clear from the image that as the number of threads increases, the
+	cost of the spin-lock increases significantly.
+
+SortedList.c
+	This is the implementation of the interface supplied in SortedList.h
+
+SortedList.h
+	This is the supplied header file interface for use with SortedList.c.
+
+lab2_add.csv
+	This contains the results of the tests written in the Makefile for
+	driving lab2_add.
+	
+lab2_list.csv
+	This contains the results of the tests written in the Makefile for
+	driving lab2_list.
+
+Question 2.1.1
+	 A large number of iterations is required before errors are seen because
+	 a larger number of iterations gives greater elapsed time in which
+	 competing threads can modify the value of the counter which in turn
+	 makes the chance that a context switch may happen ebfore the "addition"
+	 and "subtraction" steps are performed is more likely.
+
+	 A smaller number of iterations rarely fails because a small number of
+	 iterations means that the thread is likely to finish before the
+	 scheduler decides that it is time to switch to another process. It is
+	 these context switches that create race conditions, so by avoiding
+	 them, it reduces the chance that the counter will be non-zero at the
+	 finish.
+
+Question 2.1.2
+	 The yield runs go so much slower because the computations done in the
+	 add() function as so simplistic that they can most likely be completed
+	 within a given scheduler slice. By purposefully invoking sched_yield()
+	 despite not being "done" with the operation, the CPU is forced to
+	 undergo many more context switches than it would have without the yield
+	 option.
+
+	 The additional time is spent in the kernel which is performing many
+	 more context switches than a non-yield run because we explicitly tell
+	 the CPU to switch to another thread before it's done with its time
+	 slice.
+
+	 The timings will not be valid when invoking the --yield option because
+	 the amount of CPU time dedicated to context switches with respect to
+	 the time spent in the add function is large enough to be non-trivial.
+
+Question 2.1.3
+	 For instances with fewer number of iterations, the overhead associated
+	 with the context switches and function calls dominates the time spent
+	 actually incrementing and decrementing the counter. As we increase the
+	 number of iterations, the overhead remains constant, leading to a
+	 non-linear increase in overall cost, meaning the average cost per
+	 operation will decrease.
+
+	 We will never determine the "true" or "correct" cost is because the
+	 overhead from function calls and context switches will always be
+	 present. However, if one is to record the average cost per iteration
+	 for varying iterations, a regression line/curve could be used to
+	 extrapolate what the true averate cost per iteration is as for large
+	 iteration, it will dominate the context switch/function call overhead.
+
+Question 2.1.4
+	 When the number of threads is low, the overhead from the function calls
+	 and the context switches is dominated by the time spent performing
+	 actual computations. Since there is a small number of locks/unlocks (of
+	 any method), the difference in their performance is minimized.
+
+	 As the number of threads rises, access to the counter is still
+	 restricted by whatever locking mechanism is used, meaning that no
+	 matter how many threads we have, the counter can only be accessed by
+	 one thread at a time. So, increasing the number of threads means that
+	 we spend more time waiting on locks and there are more function
+	 calls/context switches as a result of that increased number of threads,
+	 thereby decreasing performance.
+
+Question 2.2.1
+	 For the add cases, the time increases as the number of threads
+	 increases initially, but after a while, the cost per operation levels
+	 out. The steady increase in cost per operation is likely as result of
+	 the increased number of threads trying to access the same mutex. Since
+	 the number of threads that can access the critical section remains one,
+	 regardless of the number of threads, there is additional overhead as a
+	 given thread must wait longer for its turn.
+
+	 For the list cases, the time initially was higher for a single thread,
+	 but the operation count decreased for two threads, and from there on
+	 out, it remained nearly constant. The initial decrease in operation
+	 cost as the thread count goes from 1 to 2 can be explained by the
+	 dominating factor of the overhead involved in the creation and joining
+	 of a single thread. For multiple threads, this overhead becomes less
+	 noticable as the "real" computation spends more time.
+
+	 The reason for the add mutex plot leveling out whereas the list mutex
+	 remains mostly the same is likely a result of the the fact that the
+	 incrementing and decrementing performed in part 1 takes relatively
+	 little time compared to the list's operationsthat are
+	 performed. Because the incrementing and decrementing takes less time
+	 with respect to the context switches/thread overhead than the list's
+	 operations, the increase in cost per operations for adding is more
+	 noticable than the list.
+
+Question 2.2.2
+	 For small number of threads (i.e. less than 10), the difference in cost
+	 per operation of a mutex versus a spin-lock is negligible. However, as
+	 the thread count increases beyond that, the spin lock becomes noticably
+	 more expensive than the mutex, to the point of almost looking
+	 exponential. The cost per operation for mutex locking remains nearly
+	 constant as the thread count increase.
+
+	 The reason for the spin-locks becoming way more expensive than the
+	 mutex is due to the fact that each compare and swap used in the spin
+	 lock is essentially acting like a "mini-mutex", and during the time in
+	 which the compare and swap is happening, the operating system cannot
+	 pre-empt, thereby increasing a thread's execution time and increasing
+	 its cost per operation. The cost of the mutex remains nearly constant
+	 because it allows for threads to be slept early if the scheduler sees
+	 fit, allowing the computations to go through sooner. Since only one
+	 thread can access the linked list at a time in this circumstance,
+	 threads are slept and awoken quickly.

@@ -1,0 +1,150 @@
+NAME:  Kyle Leong
+EMAIL: redacted@example.com
+ID:    123456789
+
+SortedList.h
+	This contains the interface for the doubly-linked, circular, sorted
+	linked list. The code was a copy-and-paste from Project 2A, itself a
+	direct download from the project's web site.
+
+SortedList.c
+	This contains the implementation of the sorted linked list described in
+	SortedList.h. This code was a copy-and-paste from Project 2A, which did
+	not use any external resources.
+
+lab2_list.c
+	This source file implements the lab2_list executable. It was a
+	copy-and-paste from Project 2A with minor modifications, and no
+	additional sources used.
+
+Makefile
+	This contains the build recipes necessary to make the lab2_list, the
+	profile data, the graphs, as well as being able to remove all generated
+	data. No additional sources were used as reference.
+
+lab2b_list.csv
+	Contains the output data from lab2_list from tests described in the
+	tests recipe in the Makefile.
+
+profile.out
+	Contains the profiling data for the whole application as well as the
+	annotated source code profiling for the thread function that is called
+	by p_threads.
+
+lab2_list.gp
+	Contains the gnuplot script that creates the necessary plots that were
+	asked for the in spec.
+
+lab2b_1.png
+	Contains a graph comparing the throughput in operations per second
+	versus the number of threads for the mutex and spin locks types.
+
+lab2b_2.png
+	Contains a graph comparing the time in nanoseconds between the time
+	spent waiting to acquire a lock (from the first request) and the time
+	per operation versus the number of threads, for the spin lock only.
+
+lab2b_3.png
+	Contains a graph comparing the successful runs for iterations of
+	unprotected, spin-locked, and mutex protecteed runs for varying
+	iterations and threads.
+
+lab2b_4.png
+	Contains a graph comparing the number of operations per second for 1, 4,
+	8, and 16 sub lists where each list is protected by a mutex.
+
+lab2b_5.png
+	Contains a graph comparing the number of operations per second for 1, 4,
+	8, and 16 sub lists where each list is protected by a spin-lock.
+
+README
+	This is the file that contains explanations as to what every file
+	included in the distribution tarball does as well as works cited for
+	every source module, when applicable.
+
+Question 2.3.1
+	 I believe that most of the cycles in the 1 thread programs (regardless
+	 of synchronization mechanism) is spent performing the 1000 list
+	 insertions and deletions because the lock will always be free, and the
+	 test and set operation will always return 0 for a single thread
+	 (i.e. it is free). For 2-threaded programs with mutexes, I believe that
+	 most of the time will be spent doing the list insertions, since mutexes
+	 do not keep checking the lock's status and thereby do not continually
+	 waste CPU cycles. For 2-threaded programs with spin-locks, I believe
+	 that most of the time will be spent spinning by the spin lock's
+	 inherent design.
+
+	 For high-thread spin lock tests, I believe most of the time/cycles will
+	 be spent spinning as only one of the threads can access the critical
+	 section at a time, and the spin-locked threads do not have a way of
+	 givin up their time slice, thereby increasing the time that passes
+	 until the thread that does hold the lock can continue computations. For
+	 high-thread mutex tests, I believe that most of the time will be spent
+	 doing list operations, since threads that fail to acquire the mutex
+	 lock will yield, decreasing the time until the thread that holds the
+	 mutex can do some computations.
+
+Question 2.3.2
+	 From the pprof output, we can determine that by a large margin, most of
+	 the time is being spent in the spin lock, where it is waiting for
+	 access to the lock. This operation becomes expensive with a large
+	 number of threads for a couple of reasons. Firstly, only one thread can
+	 access the lock at a time by design, so as the number of threads
+	 increase, there are more threads competing for access to the
+	 lock. Secondly, since spin locks have no way of relinquishing their CPU
+	 upon failing to acquire the lock, they continue to spin and consume CPU
+	 cycles until the OS' scheduler moves to another thread. Thus, it takes
+	 a much longer time for the CPU to get around to the thread that has
+	 control of the lock, making the operation much more expensive. The
+	 price of the spin lock is evident in pprof's --list output, which shows
+	 that the spin_lock takes many more cycles than the list operations.
+
+Question 2.3.3
+	 The average lock wait time rises dramatically with the number of
+	 threads because regardless of the number of threads, only one thread
+	 can access the lock at a time. Also, since we are using spin locks, the
+	 thread does not relinquish its control of the CPU until the OS'
+	 scheduler forces a context switch, meaning more time is spent waiting
+	 for a lock that may not finish until the next time that the scheduler
+	 cycles through all of the threads, a time that increases linearly with
+	 the number of threads.
+
+	 The time per operation also increases because with an increased number
+	 of threads because the possibility that a thread will not immediately
+	 be able to gain control of the lock will increase due to a greater
+	 number of threads. This waiting time is factored into the calculation
+	 of the time per operation.
+
+	 However, it does not rise as rapidly as the average lock wait time
+	 because there are multiple operations being done for each acquisition
+	 of the lock, which contributes to the lower overall time per
+	 operation. However, the lock is locked and unlocked each time we
+	 calculate the time for wait-for-lock, regardless of the --iterations
+	 flag.
+
+Question 2.3.4
+	 By looking at the respective graphs, one can see that for multiple
+	 threads, regardless of the locking mechanism, for each doubling of the
+	 number of threads, the spacing between the number of operations per
+	 second for each number of lists remains the same. Since the scale of
+	 the operations per second is logarithmic, the fact that they are evenly
+	 spaced implies that the performance of the partitioned lists increases
+	 linearly with the number of lists.
+
+	 As the number of lists is further increased, it will not continue to
+	 increase in the same fashion that we see in the current graph. This is
+	 because the lists will rarely become accessed at the same time, meaning
+	 that there overhead associated with locking and unlocking becomes more
+	 noticable. Additionally, the current hash function only considers the
+	 first character in the key, so if we have more lists than we have valid
+	 key characters, these extra lists will be never used, and thus will not
+	 increase efficiency.
+
+	 From the graph, we can deduce that no, an N-way partitioned list will
+	 not have equilvalent throughput to a single list with (1/N) fewer
+	 threads. Though reducing the number of threads usually tends to
+	 increase throughput, increasing the number of sub-lists shows more
+	 consistent performance as the number of threads increases, meaning that
+	 increasing N will make an N-way partitioned list more efficient
+	 (i.e. have greater throughput) than a single list with fewer (1/N)
+	 threads.

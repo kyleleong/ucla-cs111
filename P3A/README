@@ -1,0 +1,17 @@
+NAME:  Kyle Leong, Zachary Finkelstein
+EMAIL: redacted@example.com, redacted@example.com
+ID:    123456789, 123456789
+
+README
+	This source file contains all relevant information about the files that
+	will be included in the distribution tarball.
+
+Makefile
+	This Makefile includes the default recipe which generates the required
+	executable, dist which creates the distribution tarball, and clean which
+	deletes all programs and output created by the Makefile.
+
+lab3a.c
+	This source file contains the implementation of the project described in
+	the webpage. As a reference, I used Rishab Doshi's slides as well as the
+	EXT2 documentation provided at the project's webpage.

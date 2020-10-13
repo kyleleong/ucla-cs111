@@ -1,0 +1,63 @@
+NAME:  Kyle Leong
+EMAIL: redacted@example.com
+ID:    123456789
+
+lab0.c
+	This file contains the source code necessary to implement the lab0
+	executable described in the spec. It will compile without warnings and
+	errors. As a reference for the syntax and usage of getopt(3), I used the
+	examples included within the getopt(3) manpage. Additionally, as a
+	reference for the correct parameters to pass to the open(2) and creat(2)
+	calls, I used this site linked to in the project spec:
+	http://web.cs.ucla.edu/~harryxu/courses/111/winter20/ProjectGuide/fd_juggling.html
+
+Makefile
+	This file contains the recipes that implement the functionality required
+	in the spec. The first target (which is the default by virtue of being
+	first) is called 'lab0', and will create an executable named lab0 from
+	lab0.c with warnings and debugging information enabled. The second
+	target, 'check' will run the smoke tests that are described in further
+	detail below. The third target 'clean' will remove all files created by
+	the Makefile, which is possibly only the lab0 executable and the
+	lab0-XXXXXXXXX.tar.gz distribution tarball. The fourth and last target
+	is dist which takes the files required in the submission, and tars them
+	into a tar.gz tarball. As a reference, I used the resource
+	https://www.gnu.org/software/make/manual/html_node/Introduction.html
+
+	Smoke Checks: First, there is a sanity check to ensure that the
+	executable lab0 exists. Test 0 checks to see whether lab0 will return
+	the correct value of 1 given an extraneous argument without the double
+	dashes. Test 1 checks to see that lab0 returns the correct value of 1 if
+	there is a bad argument supplied. Test 2 checks to see whether an
+	unreadable or otherwise erroneous file will cause the program to exit
+	with the appropriate error code of 2. Test 3 checks to see whether an
+	unwriteable file will cause the program to exit with a code of 3. Test 4
+	causes the program to segfault with the catch option, to check whether
+	it will return 4. Test 5 provides multiple bad arguments to see whether
+	the precedence of operations described in the spec is correctly
+	implemented. It should return 2 despite there being the segfault and
+	catch options since the input file is unreadable, and an unreadable file
+	has higher priority than the segfault and catch. Test 6 checks to see
+	whether lab0, when called with default arguments, will successfully pass
+	a string from standard input to standard output without modifying
+	it. Test 7 will make sure that given a file to read as input, that lab0
+	will output it correctly. Test 8 will make sure that given a file to
+	output to, the correct contents will be output. Test 9 will ensure that
+	calling the segfault switch by itself will exit with an error code of 139.
+
+backtrace.png
+	This screenshot shows the entire procedure of loading lab0 into gdb,
+	starting the lab0 executable with the necessary --segfault argument, the
+	line that caused the segment fault, and the stack trace leading up to
+	the segmentation fault.
+
+breakpoint.png
+	This screenshot shows the entire procedure of loading lab0 into gdb,
+	breaking on line 33 of lab0.c (which we knew from the results of
+	backtrace.png), running the program with the necessary --segfault
+	argument, and printing out the segfaultme variable to confirm that it
+	indeed points to 0x0.
+
+README
+	This file contains information about all the other files that will be
+	included in the final distribution tarball.
